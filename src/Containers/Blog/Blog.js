@@ -1,28 +1,57 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
+import axios from "axios";
 
-import Post from '../../Components/Post/Post';
-import FullPost from '../../Components/FullPost/FullPost';
-import NewPost from '../../Components/NewPost/NewPost';
-import classes from './Blog.module.css';
+import Post from "../../Components/Post/Post";
+import FullPost from "../../Components/FullPost/FullPost";
+import NewPost from "../../Components/NewPost/NewPost";
+import classes from "./Blog.module.css";
 
 class Blog extends Component {
-    render () {
-        return (
-            <div>
-                <section className={classes.Posts}>
-                    <Post />
-                    <Post />
-                    <Post />
-                </section>
-                <section>
-                    <FullPost />
-                </section>
-                <section>
-                    <NewPost />
-                </section>
-            </div>
-        );
-    }
+  state = {
+    posts: [],
+    selectedPostId: null,
+  };
+
+  componentDidMount() {
+    axios.get("http://jsonplaceholder.typicode.com/posts").then((response) => {
+      const posts = response.data.slice(0, 4);
+      const updatedPosts = posts.map((post) => {
+        return {
+          ...post,
+          author: "Max",
+        };
+      });
+      this.setState({ posts: updatedPosts });
+    });
+  }
+
+  handlePostClicked(id) {
+    this.setState({selectedPostId: id})
+  }
+
+  render() {
+    const posts = this.state.posts.map((post) => {
+      return (
+        <Post
+          key={post.id}
+          title={post.title}
+          author={post.author}
+          clicked={() => this.handlePostClicked(post.id)}
+        />
+      );
+    });
+    return (
+      <div>
+        <section className={classes.Posts}>{posts}</section>
+        <section>
+          <FullPost id={this.state.selectedPostId} />
+        </section>
+        <section>
+          <NewPost />
+        </section>
+      </div>
+    );
+  }
 }
 
 export default Blog;
