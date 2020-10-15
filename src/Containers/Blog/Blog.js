@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import axios from "axios";
+import axios from "../../axios";
 
 import Post from "../../Components/Post/Post";
 import FullPost from "../../Components/FullPost/FullPost";
@@ -15,7 +15,7 @@ class Blog extends Component {
 
   componentDidMount() {
     axios
-      .get("http://jsonplaceholder.typicode.com/postsss")
+      .get("/posts")
       .then((response) => {
         const posts = response.data.slice(0, 4);
         const updatedPosts = posts.map((post) => {
@@ -28,6 +28,8 @@ class Blog extends Component {
       })
       .catch((error) => {
         this.setState({ error: true });
+        console.log('[Blog componentDidMount]:')
+        console.log(error)
       });
   }
 
@@ -36,7 +38,7 @@ class Blog extends Component {
   }
 
   render() {
-    let posts = <p style={{color: 'red'}}>Something went wrong!</p>;
+    let posts = <p style={{ color: "red" }}>Something went wrong!</p>;
     if (!this.state.error) {
       posts = this.state.posts.map((post) => {
         return (
